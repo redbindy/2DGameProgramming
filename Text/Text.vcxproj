@@ -107,7 +107,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;GameInput.lib;xaudio2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -126,6 +126,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="Console.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -135,10 +136,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyGame.cpp" />
     <ClCompile Include="Sprite.cpp" />
-    <ClCompile Include="Text.cpp" />
+    <ClCompile Include="TextSprite.cpp" />
+    <ClCompile Include="TextDX.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Audio.h" />
+    <ClInclude Include="Console.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Game.h" />
@@ -149,7 +152,8 @@
     <ClInclude Include="MyGame.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Sprite.h" />
-    <ClInclude Include="Text.h" />
+    <ClInclude Include="TextSprite.h" />
+    <ClInclude Include="TextDX.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

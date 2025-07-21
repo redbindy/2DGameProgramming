@@ -1,15 +1,19 @@
 #pragma once
-
+#define _CRT_SECURE_NO_WARNINGS
 #define WIN32_LEAN_AND_MEAN
 
 #include <Windows.h>
 #include <xaudio2.h>
 
 #include <cctype>
+#include <tchar.h>
 
 #include "Graphics.h"
 #include "Input.h"
 #include "constants.h"
+#include "TextSprite.h"
+#include "TextDX.h"
+#include "Console.h"
 
 class Game
 {
@@ -35,12 +39,19 @@ protected:
 	LARGE_INTEGER mTimerFreq;
 
 	float mFps;
+	bool mbFpsDisplayOn;
+
 	float mFrameTime;
 
 	bool mbPaused;
 
 	IXAudio2* mpXAudio;
 	IXAudio2MasteringVoice* mpMasteringVoice;
+
+	TextSprite* mpText;
+	TextDX* mpTextDX;
+
+	Console* mpConsole;
 
 protected:
 	virtual void update() = 0;

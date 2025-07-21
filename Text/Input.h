@@ -1,19 +1,24 @@
 #pragma once
 
+#define _CRT_SECURE_NO_WARNINGS
 #define WIN32_LEAN_AND_MEAN
+
+#include <GameInput.h>
+#pragma comment(lib, "GameInput.lib")
 
 #include <Windows.h>
 #include <windowsx.h>
-#include <GameInput.h>
+#include <tchar.h>
 
 #include <cassert>
 #include <iostream>
 
 #include "Constants.h"
 
-enum
+enum EInputConstant
 {
-	MAX_KEY_ROLLOVER = 16
+	MAX_KEY_ROLLOVER = 16, 
+	MAX_STR_LEN = 64
 };
 
 class Input final
@@ -32,7 +37,11 @@ public:
 	void OnVibratingController(const float duration);
 	void VibrateController(const float frameTime);
 
+	void OnCharIn(const WPARAM ch);
 	bool IsKeyPressed(const UCHAR vk) const;
+
+	void GetInputStr(TCHAR* pOutputBuffer) const;
+	void ClearStr();
 
 private:
 	HWND mhWnd;
@@ -52,6 +61,9 @@ private:
 	bool mbMouseCaptured;
 	bool mbLButton;
 	bool mbRButton;
+
+	TCHAR mStrBuffer[MAX_STR_LEN + 1];
+	int mStrSize;
 };
 
 inline GameInputGamepadState Input::GetGamepadState() const

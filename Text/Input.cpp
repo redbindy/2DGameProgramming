@@ -13,6 +13,8 @@ Input::Input(const HWND hWnd, const bool bMouseCapture)
 	, mbMouseCaptured(bMouseCapture)
 	, mbLButton(false)
 	, mbRButton(false)
+	, mStrBuffer{ '\0' }
+	, mStrSize(0)
 {
 	std::cout << "Initialize Input" << std::endl;
 
@@ -112,6 +114,32 @@ void Input::VibrateController(const float frameTime)
 	pReading->Release();
 }
 
+void Input::OnCharIn(const WPARAM ch)
+{
+	if (mStrSize == EInputConstant::MAX_STR_LEN)
+	{
+		mStrBuffer[mStrSize - 1] = static_cast<TCHAR>(ch);
+
+		return;
+	}
+
+	switch (ch)
+	{
+	case VK_BACK:
+		if (mStrSize != 0)
+		{
+			--mStrSize;
+			mStrBuffer[mStrSize] = '\0';
+		}
+		break;
+
+	default:
+		mStrBuffer[mStrSize] = static_cast<TCHAR>(ch);
+		++mStrSize;
+		break;
+	}
+}
+
 bool Input::IsKeyPressed(const UCHAR vk) const
 {
 	for (int i = 0; i < mKeyStateCount; ++i)
@@ -123,4 +151,15 @@ bool Input::IsKeyPressed(const UCHAR vk) const
 	}
 
 	return false;
+}
+
+void Input::GetInputStr(TCHAR* pOutputBuffer) const
+{
+	_tcscpy(pOutputBuffer, mStrBuffer);
+}
+
+void Input::ClearStr()
+{
+	memset(mStrBuffer, '\0', sizeof(TCHAR) * mStrSize);
+	mStrSize = 0;
 }

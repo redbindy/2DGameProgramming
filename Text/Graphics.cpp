@@ -11,6 +11,7 @@ Graphics::Graphics(const HWND hWnd, const int width, const int height)
 	, mpSpriteBatch(nullptr)
 	, mpTextureResourceViewGPU(nullptr)
 	, mpCommonStates(nullptr)
+	, mpD2DRenderTarget(nullptr)
 {
 	std::cout << "Initialize Graphics" << std::endl;
 
@@ -37,14 +38,16 @@ void Graphics::BeginRendering()
 {
 	mpDeviceContext->OMSetRenderTargets(1, &mpRenderTargetViewGPU, nullptr);
 
-	const float clearColor[] = { 0.f, 0.f, 0.f, 1.f };
+	constexpr float clearColor[] = { 0.f, 0.f, 0.f, 1.f };
 	mpDeviceContext->ClearRenderTargetView(mpRenderTargetViewGPU, clearColor);
 
 	mpSpriteBatch->Begin(SpriteSortMode_Deferred, mpCommonStates->NonPremultiplied());
+	mpD2DRenderTarget->BeginDraw();
 }
 
 void Graphics::EndRendering()
 {
+	mpD2DRenderTarget->EndDraw();
 	mpSpriteBatch->End();
 
 	HRESULT hr = mpSwapChain->Present(1, 0);
@@ -157,10 +160,40 @@ void Graphics::OnResize(const int width, const int height)
 	vp.TopLeftY = 0;
 
 	mpDeviceContext->RSSetViewports(1, &vp);
+
+	IDXGISurface* pDXGISurface = nullptr;
+	mpSwapChain->GetBuffer(0, IID_PPV_ARGS(&pDXGISurface));
+	assert(pDXGISurface != nullptr);
+
+	ID2D1Factory1* pFactory;
+	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &pFactory);
+	if (FAILED(hr))
+	{
+		std::cerr << "D2D1CreateFactory" << std::endl;
+
+		DebugBreak();
+	}
+
+	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
+		D2D1_RENDER_TARGET_TYPE_DEFAULT,
+		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
+	);
+
+	hr = pFactory->CreateDxgiSurfaceRenderTarget(pDXGISurface, props, &mpD2DRenderTarget);
+	if (FAILED(hr))
+	{
+		std::cerr << "CreateDxgiSurfaceRenderTarget" << std::endl;
+
+		DebugBreak();
+	}
+
+	pFactory->Release();
+	pDXGISurface->Release();
 }
 
 void Graphics::cleanupResources()
 {
+	SafeRelease(mpD2DRenderTarget);
 	delete mpCommonStates;
 	delete mpSpriteBatch;
 	SafeRelease(mpRenderTargetViewGPU);
@@ -173,7 +206,7 @@ void Graphics::resetResources()
 {
 	cleanupResources();
 
-	UINT creationFlags = 0;
+	UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT; // D2D È£È¯¿ë
 #if defined(DEBUG) || defined(_DEBUG)
 	creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
@@ -209,7 +242,7 @@ void Graphics::resetResources()
 			DebugBreak();
 		}
 
-		constexpr UINT preferredSampleCounts[] = {4, 2};
+		constexpr UINT preferredSampleCounts[] = { 4, 2 };
 		UINT sampleQualityLevels = 0;
 
 		for (const UINT sc : preferredSampleCounts)

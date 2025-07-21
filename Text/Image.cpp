@@ -45,7 +45,7 @@ void Image::Draw() const
 	ID3D11ShaderResourceView* const pSpriteGPU = mpSprite->GetSpriteGPU();
 
 	mpGraphics->DrawSprite(
-		mpSprite->GetSpriteGPU(),
+		pSpriteGPU,
 		mPosition,
 		&sourceRect,
 		Colors::White,

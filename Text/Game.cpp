@@ -8,10 +8,14 @@ Game::Game(const HWND hWnd)
 	, mTimeEnd({ 0, })
 	, mTimerFreq({ 0, })
 	, mFps(0)
+	, mbFpsDisplayOn(true)
 	, mFrameTime(0)
 	, mbPaused(false)
 	, mpXAudio(nullptr)
 	, mpMasteringVoice(nullptr)
+	, mpText(nullptr)
+	, mpTextDX(nullptr)
+	, mpConsole(nullptr)
 {
 	std::cout << "Initialize Game" << std::endl;
 
@@ -53,10 +57,18 @@ Game::Game(const HWND hWnd)
 	{
 		std::cerr << "CreateMasteringVoice" << std::endl;
 	}
+
+	mpText = new TextSprite(mpGraphics);
+	mpTextDX = new TextDX(mpGraphics);
+	mpConsole = new Console(mpGraphics, mpInput, mpTextDX);
 }
 
 Game::~Game()
 {
+	delete mpConsole;
+	delete mpTextDX;
+	delete mpText;
+
 	CoUninitialize();
 
 	delete mpGraphics;
@@ -71,6 +83,22 @@ LRESULT Game::HandleWndMessage(const HWND hWnd, const UINT msg, const WPARAM wPa
 	{
 	case WM_DESTROY:
 		PostQuitMessage(0);
+		break;
+
+	case WM_CHAR:
+		switch (wParam)
+		{
+		case '`':
+			mpConsole->SwapVisible();
+			break;
+
+		default:
+			if (mpConsole->IsVisible())
+			{
+				mpConsole->OnInput(wParam);
+			}
+			break;
+		}
 		break;
 
 	case WM_MOUSEMOVE:
@@ -141,6 +169,25 @@ void Game::Run()
 	mpGraphics->BeginRendering();
 	{
 		render();
+
+		const char* multiLineStr = "strA\n"
+			"strB\n"
+			"Hello World";
+		mpText->Print(multiLineStr, 100, 100);
+
+		const TCHAR* testStr = TEXT("Str1\n")
+			TEXT("Str2");
+		mpTextDX->Print(testStr, 500, 100);
+
+		if (mbFpsDisplayOn)
+		{
+			TCHAR buffer[16];
+
+			_stprintf(buffer, TEXT("Fps: %d"), static_cast<int>(mFps));
+			mpTextDX->Print(buffer, 0, 0);
+		}
+
+		mpConsole->Draw();
 	}
 	mpGraphics->EndRendering();
 }

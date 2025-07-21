@@ -1,8 +1,10 @@
 #pragma once
 
+#include <xaudio2.h>
+#pragma comment(lib, "xaudio2.lib")
+
 #include <iostream>
 #include <cassert>
-#include <xaudio2.h>
 
 #include "Constants.h"
 
@@ -56,7 +58,7 @@ public:
 
 	void UpdateState();
 
-	void Play() const;
+	bool TryPlay() const;
 	void Stop() const;
 
 private:
@@ -64,6 +66,8 @@ private:
 
 	BYTE* mpRawAudio;
 	uint32_t mAudioLength;
+
+	XAUDIO2_BUFFER mXAudioBuffer;
 
 private:
 	const uint8_t* getDataFromRawMemory(const uint8_t* pRaw, const int byteSize, void* pOut) const;

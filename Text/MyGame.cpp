@@ -8,15 +8,15 @@ MyGame::MyGame(const HWND hWnd)
 	, mDynamic(&mCharacterSheet, this, 6, 0, 3, 4)
 {
 	mCharacter.SetPosition(300, 300);
-	mCharacter.SetScale(5);
-	mCharacter.SetMass(300.f);
+	// mCharacter.SetScale(5);
+	// mCharacter.SetMass(300.f);
 
 	mStatic.SetPosition(500, 500);
-	mStatic.SetScale(5);
-	mStatic.SetMass(500.f);
+	// mStatic.SetScale(5);
+	// mStatic.SetMass(500.f);
 
 	mDynamic.SetPosition(700, 700);
-	mDynamic.SetScale(5);
+	// mDynamic.SetScale(5);
 }
 
 void MyGame::update()

@@ -4,6 +4,7 @@ Audio::Audio(const int resourceId, IXAudio2* const pXAudio)
 	: mpSourceVoice(nullptr)
 	, mpRawAudio(nullptr)
 	, mAudioLength(0)
+	, mXAudioBuffer{ 0, }
 {
 	std::cout << "Initialize Audio" << std::endl;
 
@@ -130,37 +131,33 @@ Audio::Audio(const int resourceId, IXAudio2* const pXAudio)
 		HRESULT hr = pXAudio->CreateSourceVoice(&mpSourceVoice, &header.formatChunk.format);
 	}
 	FreeResource(hWav);
+
+	mXAudioBuffer.AudioBytes = mAudioLength;
+	mXAudioBuffer.pAudioData = mpRawAudio;
+	mXAudioBuffer.Flags = XAUDIO2_END_OF_STREAM;
 }
 
 Audio::~Audio()
 {
-	mpSourceVoice->DestroyVoice();
 	delete[] mpRawAudio;
+	mpSourceVoice->DestroyVoice();
 }
 
-void Audio::UpdateState()
+bool Audio::TryPlay() const
 {
 	XAUDIO2_VOICE_STATE state;
 	mpSourceVoice->GetState(&state);
 
 	if (state.BuffersQueued > 0)
 	{
-		return;
+		return false;
 	}
 
-	XAUDIO2_BUFFER audioBuffer;
-	ZeroMemory(&audioBuffer, sizeof(audioBuffer));
+	mpSourceVoice->SubmitSourceBuffer(&mXAudioBuffer);
 
-	audioBuffer.AudioBytes = mAudioLength;
-	audioBuffer.pAudioData = mpRawAudio;
-	audioBuffer.Flags = XAUDIO2_END_OF_STREAM;
-
-	mpSourceVoice->SubmitSourceBuffer(&audioBuffer);
-}
-
-void Audio::Play() const
-{
 	mpSourceVoice->Start();
+
+	return true;
 }
 
 void Audio::Stop() const

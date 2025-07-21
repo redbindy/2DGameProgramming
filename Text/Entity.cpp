@@ -36,7 +36,6 @@ void Entity::Update(const float frameTime)
 	XMStoreFloat2(&mVelocity, velocity);
 
 	Image::Update(frameTime);
-	mAudio.UpdateState();
 }
 
 bool Entity::TestCollision(const Entity& other, XMFLOAT2& outCollisionVector) const
@@ -154,7 +153,7 @@ void Entity::Bounce(const XMFLOAT2& collisionVector, const Entity& other)
 		XMStoreFloat2(&mDeltaV, nextDeltaV);
 	}
 
-	mAudio.Play();
+	mAudio.TryPlay();
 }
 
 void Entity::CalculateGravityForce(const Entity& other, const float frameTime)
