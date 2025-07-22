@@ -9,15 +9,18 @@ MyGame::MyGame(const HWND hWnd)
 	, mStatic(&mCharacterSheet, this, 0, 5, 3, 4)
 	, mDynamic(&mCharacterSheet, this, 6, 0, 3, 4)
 {
-	mCharacter.SetPosition(mpGraphics->GetWidth() * 0.5f, mpGraphics->GetHeight() * 0.5f);
+	const float centerX = mpGraphics->GetWidth() * 0.5f;
+	const float centerY = mpGraphics->GetHeight() * 0.5f;
+
+	mCharacter.SetPosition(centerX, centerY + 300.f);
 	mCharacter.SetScale(5);
 	// mCharacter.SetMass(300.f);
 
-	mStatic.SetPosition(500, 500);
-	// mStatic.SetScale(5);
+	mStatic.SetPosition(centerX, centerY);
+	mStatic.SetScale(3);
 	// mStatic.SetMass(500.f);
 
-	mDynamic.SetPosition(700, 700);
+	mDynamic.SetPosition(centerX, centerY - 300.f);
 	// mDynamic.SetScale(5);
 }
 
@@ -124,7 +127,11 @@ void MyGame::update()
 	mCharacter.AddDeltaV(deltaX, deltaY);*/
 	mCharacter.SetAnimationState(bAnimainting);
 
-	mCharacter.CalculateGravityForce(mStatic, mFrameTime);
+	// mCharacter.CalculateGravityForce(mStatic, mFrameTime);
+
+	mCharacter.AddDeltaV(deltaX, deltaY);
+	mStatic.AddDeltaV(deltaX * 0.7f, deltaY * 0.7f);
+	mDynamic.AddDeltaV(deltaX * 0.4f, deltaY * 0.4f);
 
 	mStatic.Update(mFrameTime);
 	mDynamic.Update(mFrameTime);
