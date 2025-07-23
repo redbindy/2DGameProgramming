@@ -7,7 +7,7 @@ class Sprite final
 {
 public:
 	Sprite(const int resourceId, Graphics* const pGraphics);
-	~Sprite();
+	virtual ~Sprite();
 
 	inline ID3D11ShaderResourceView* GetSpriteGPU() const;
 

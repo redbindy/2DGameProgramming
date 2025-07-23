@@ -9,11 +9,12 @@ class TextDX final
 {
 public:
 	TextDX(Graphics* const pGraphics);
-	~TextDX();
+	virtual ~TextDX();
 
 	inline float GetFontSize() const;
 
 	void Print(const TCHAR* str, const float x, const float y);
+	void Print(const TCHAR* str, D2D1_RECT_F rect, DWRITE_TEXT_ALIGNMENT alignmentMode);
 
 private:
 	Graphics* mpGraphics;

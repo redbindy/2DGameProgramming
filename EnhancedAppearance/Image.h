@@ -51,6 +51,7 @@ public:
 	inline void SetAnimationState(const bool bAnimating);
 
 	void Draw() const;
+	void DrawPatch(const float x, const float y, const float alpha, const SpriteEffects effect) const;
 	void DrawPatch() const;
 
 	virtual void Update(const float frameTime);

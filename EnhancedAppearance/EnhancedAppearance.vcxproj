@@ -134,6 +134,7 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyGame.cpp" />
+    <ClCompile Include="MyMessageBox.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="TextDX.cpp" />
     <ClCompile Include="TextSprite.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="Image.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="MyGame.h" />
+    <ClInclude Include="MyMessageBox.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="TextDX.h" />

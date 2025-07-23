@@ -11,6 +11,7 @@ Graphics::Graphics(const HWND hWnd, const int width, const int height)
 	, mpSpriteBatch(nullptr)
 	, mpTextureResourceViewGPU(nullptr)
 	, mpCommonStates(nullptr)
+	, mpD2DFactory(nullptr)
 	, mpD2DRenderTarget(nullptr)
 {
 	std::cout << "Initialize Graphics" << std::endl;
@@ -76,8 +77,10 @@ void Graphics::OnResize(const int width, const int height)
 	mHeight = height;
 
 	mpDeviceContext->OMSetRenderTargets(0, nullptr, nullptr);
-
+	SafeRelease(mpD2DRenderTarget);
 	SafeRelease(mpRenderTargetViewGPU);
+
+	mpDeviceContext->Flush();
 
 	HRESULT hr = mpSwapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 
@@ -140,21 +143,12 @@ void Graphics::OnResize(const int width, const int height)
 	mpSwapChain->GetBuffer(0, IID_PPV_ARGS(&pDXGISurface));
 	assert(pDXGISurface != nullptr);
 
-	ID2D1Factory1* pFactory;
-	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &pFactory);
-	if (FAILED(hr))
-	{
-		std::cerr << "D2D1CreateFactory" << std::endl;
-
-		DebugBreak();
-	}
-
 	D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(
 		D2D1_RENDER_TARGET_TYPE_DEFAULT,
 		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED)
 	);
 
-	hr = pFactory->CreateDxgiSurfaceRenderTarget(pDXGISurface, props, &mpD2DRenderTarget);
+	hr = mpD2DFactory->CreateDxgiSurfaceRenderTarget(pDXGISurface, props, &mpD2DRenderTarget);
 	if (FAILED(hr))
 	{
 		std::cerr << "CreateDxgiSurfaceRenderTarget" << std::endl;
@@ -162,7 +156,6 @@ void Graphics::OnResize(const int width, const int height)
 		DebugBreak();
 	}
 
-	pFactory->Release();
 	pDXGISurface->Release();
 }
 
@@ -172,7 +165,14 @@ void Graphics::cleanupResources()
 	delete mpCommonStates;
 	delete mpSpriteBatch;
 	SafeRelease(mpRenderTargetViewGPU);
+	SafeRelease(mpD2DFactory);
+
+	if (mpSwapChain != nullptr)
+	{
+		mpSwapChain->SetFullscreenState(false, nullptr);
+	}
 	SafeRelease(mpSwapChain);
+
 	SafeRelease(mpDeviceContext);
 	SafeRelease(mpDevice);
 }
@@ -282,6 +282,14 @@ void Graphics::resetResources()
 	if (FAILED(hr))
 	{
 		std::cerr << __LINE__ << ' ' << "D3D11CreateDeviceAndSwapChain" << std::endl;
+
+		DebugBreak();
+	}
+
+	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &mpD2DFactory);
+	if (FAILED(hr))
+	{
+		std::cerr << "D2D1CreateFactory" << std::endl;
 
 		DebugBreak();
 	}

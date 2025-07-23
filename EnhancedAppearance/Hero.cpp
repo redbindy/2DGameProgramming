@@ -88,6 +88,8 @@ void Hero::OnAttacked(const int damage)
 
 void Hero::DrawPatch() const
 {
+	// reflection
+	Image::DrawPatch(GetX(), GetY() + PATCH_SIZE * GetScaleY(), 0.5f, SpriteEffects_FlipVertically);
 	Image::DrawPatch();
 
 	if (mbShield)

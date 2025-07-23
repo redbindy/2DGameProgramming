@@ -19,7 +19,7 @@ class Console final
 {
 public:
 	Console(Graphics* const pGraphics, Input* const mpInput, TextDX* pTextDX);
-	~Console();
+	virtual ~Console();
 
 	inline float GetWidth() const;
 	inline float GetHeight() const;

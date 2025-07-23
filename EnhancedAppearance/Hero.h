@@ -13,7 +13,7 @@ public:
 		const int animationFrameCount,
 		const int directionalFrameCount
 	);
-	~Hero() = default;
+	virtual ~Hero() = default;
 
 	virtual void Update(const float frameTime) override;
 	virtual void UpdateAI(const float frameTime, const Entity& other) const override;

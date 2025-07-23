@@ -103,5 +103,10 @@ int WINAPI wWinMain(
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	if (gpGame == nullptr)
+	{
+		return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	}
+
 	return gpGame->HandleWndMessage(hWnd, uMsg, wParam, lParam);
 }

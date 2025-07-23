@@ -63,7 +63,7 @@ public:
 		const int animationFrameCount,
 		const int directionalFrameCount
 	);
-	~Entity() = default;
+	virtual ~Entity() = default;
 
 	inline bool IsActive() const;
 	inline void Activate();

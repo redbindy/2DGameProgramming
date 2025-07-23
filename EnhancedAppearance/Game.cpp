@@ -16,6 +16,7 @@ Game::Game(const HWND hWnd)
 	, mpText(nullptr)
 	, mpTextDX(nullptr)
 	, mpConsole(nullptr)
+	, mpMessageBox(nullptr)
 {
 	std::cout << "Initialize Game" << std::endl;
 
@@ -61,10 +62,12 @@ Game::Game(const HWND hWnd)
 	mpText = new TextSprite(mpGraphics);
 	mpTextDX = new TextDX(mpGraphics);
 	mpConsole = new Console(mpGraphics, mpInput, mpTextDX);
+	mpMessageBox = new MyMessageBox(mpGraphics, mpInput, mpTextDX);
 }
 
 Game::~Game()
 {
+	delete mpMessageBox;
 	delete mpConsole;
 	delete mpTextDX;
 	delete mpText;
@@ -90,6 +93,20 @@ LRESULT Game::HandleWndMessage(const HWND hWnd, const UINT msg, const WPARAM wPa
 		{
 		case '`':
 			mpConsole->SwapVisible();
+			break;
+
+		case '-':
+			{
+				IDXGISwapChain* const pSwapChain = mpGraphics->GetSwapChain();
+
+				BOOL bFullScreen = false;
+				pSwapChain->GetFullscreenState(&bFullScreen, nullptr);
+
+				pSwapChain->SetFullscreenState(false, nullptr);
+				MessageBox(hWnd, TEXT("test"), TEXT("test"), MB_OK);
+
+				pSwapChain->SetFullscreenState(bFullScreen, nullptr);
+			}
 			break;
 
 		default:
@@ -123,6 +140,15 @@ LRESULT Game::HandleWndMessage(const HWND hWnd, const UINT msg, const WPARAM wPa
 	case WM_RBUTTONUP:
 		mpInput->OnRButtonEvent(false);
 		mpInput->OnMouseInput(lParam);
+		break;
+
+	case WM_SIZE:
+		{
+			const UINT width = LOWORD(lParam);
+			const UINT height = HIWORD(lParam);
+
+			mpGraphics->OnResize(width, height);
+		}
 		break;
 
 	default:
@@ -159,6 +185,8 @@ void Game::Run()
 	{
 		mpInput->PollGameInputs();
 
+		mpMessageBox->Update();
+
 		update();
 		updateAI();
 		handleCollision();
@@ -188,6 +216,7 @@ void Game::Run()
 		}
 
 		mpConsole->Draw();
+		mpMessageBox->Draw();
 	}
 	mpGraphics->EndRendering();
 }

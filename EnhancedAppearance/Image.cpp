@@ -60,7 +60,7 @@ void Image::Draw() const
 	pSpriteBatch->Draw(pSpriteGPU, destinationRect, &sourceRect);
 }
 
-void Image::DrawPatch() const
+void Image::DrawPatch(const float x, const float y, const float alpha, const SpriteEffects effect) const
 {
 	RECT sourceRect;
 	sourceRect.left = (mSourceFrameX + mCurrentAnimationFrameIndex) * PATCH_SIZE;
@@ -68,6 +68,7 @@ void Image::DrawPatch() const
 	sourceRect.right = sourceRect.left + PATCH_SIZE;
 	sourceRect.bottom = sourceRect.top + PATCH_SIZE;
 
+	const XMFLOAT2 position(x, y);
 	constexpr XMFLOAT2 origin(PATCH_SIZE_HALF, PATCH_SIZE_HALF);
 
 	ID3D11ShaderResourceView* const pSpriteGPU = mpSprite->GetSpriteGPU();
@@ -76,15 +77,20 @@ void Image::DrawPatch() const
 
 	pSpriteBatch->Draw(
 		pSpriteGPU,
-		mPosition,
+		position,
 		&sourceRect,
-		Colors::White,
+		Colors::White * alpha,
 		mRotationAngle,
 		origin,
 		mScale,
-		SpriteEffects_None,
+		effect,
 		0.f
 	);
+}
+
+void Image::DrawPatch() const
+{
+	DrawPatch(mPosition.x, mPosition.y, 1.f, SpriteEffects_None);
 }
 
 void Image::Update(const float frameTime)

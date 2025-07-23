@@ -42,12 +42,11 @@ void Console::Draw()
 
 	ID2D1RenderTarget* const pRenderTarget = mpGraphics->GetD2DRenderTarget();
 
-	D2D1_RECT_F rect = {
-		mX,
-		mY,
-		mX + mWidth,
-		mY + mHeight
-	};
+	D2D1_RECT_F rect;
+	rect.right = static_cast<float>(mpGraphics->GetWidth());
+	rect.bottom = mHeight;
+	rect.left = rect.right - mWidth;
+	rect.top = 0;
 
 	pRenderTarget->FillRectangle(&rect, mpBrush);
 

@@ -53,6 +53,7 @@ private:
 	ID3D11ShaderResourceView* mpTextureResourceViewGPU;
 	CommonStates* mpCommonStates;
 
+	ID2D1Factory1* mpD2DFactory;
 	ID2D1RenderTarget* mpD2DRenderTarget;
 
 private:

@@ -33,6 +33,11 @@ public:
 	void OnLButtonEvent(const bool bClicked);
 	void OnRButtonEvent(const bool bClicked);
 
+	inline int GetMouseX() const;
+	inline int GetMouseY() const;
+	inline bool IsLButtonClicked() const;
+	inline bool IsRButtonClicked() const;
+
 	inline GameInputGamepadState GetGamepadState() const;
 	void OnVibratingController(const float duration);
 	void VibrateController(const float frameTime);
@@ -69,4 +74,24 @@ private:
 inline GameInputGamepadState Input::GetGamepadState() const
 {
 	return mGamepadState;
+}
+
+inline int Input::GetMouseX() const
+{
+	return mMouseX;
+}
+
+inline int Input::GetMouseY() const
+{
+	return mMouseY;
+}
+
+inline bool Input::IsLButtonClicked() const
+{
+	return mbLButton;
+}
+
+inline bool Input::IsRButtonClicked() const
+{
+	return mbRButton;
 }

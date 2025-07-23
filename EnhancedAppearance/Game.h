@@ -14,6 +14,7 @@
 #include "TextSprite.h"
 #include "TextDX.h"
 #include "Console.h"
+#include "MyMessageBox.h"
 
 class Game
 {
@@ -52,6 +53,8 @@ protected:
 	TextDX* mpTextDX;
 
 	Console* mpConsole;
+
+	MyMessageBox* mpMessageBox;
 
 protected:
 	virtual void update() = 0;

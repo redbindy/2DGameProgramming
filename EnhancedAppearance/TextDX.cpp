@@ -35,11 +35,18 @@ TextDX::TextDX(Graphics* const pGraphics)
 		TEXT("ko-KR"),
 		&mpTextFormat
 	);
+
 	if (FAILED(hr))
 	{
 		std::cout << "CraeteTextFormat" << std::endl;
 
 		DebugBreak();
+	}
+
+	hr = mpTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+	if (FAILED(hr))
+	{
+		std::cerr << "SetTextAlignment" << std::endl;
 	}
 }
 
@@ -54,15 +61,22 @@ void TextDX::Print(const TCHAR* str, const float x, const float y)
 {
 	assert(str != nullptr);
 
-	ID2D1RenderTarget* const pRenderTarget = mpGraphics->GetD2DRenderTarget();
-
-	const UINT32 strLength = lstrlen(str);
-
 	D2D1_RECT_F rect;
 	rect.left = x;
 	rect.top = y;
 	rect.right = static_cast<float>(mpGraphics->GetWidth());
 	rect.bottom = static_cast<float>(mpGraphics->GetHeight());
+
+	Print(str, rect, DWRITE_TEXT_ALIGNMENT_LEADING);
+}
+
+void TextDX::Print(const TCHAR* str, D2D1_RECT_F rect, DWRITE_TEXT_ALIGNMENT alignmentMode)
+{
+	ID2D1RenderTarget* const pRenderTarget = mpGraphics->GetD2DRenderTarget();
+
+	mpTextFormat->SetTextAlignment(alignmentMode);
+
+	const UINT32 strLength = lstrlen(str);
 
 	pRenderTarget->DrawTextW(
 		str,
