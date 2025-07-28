@@ -6,8 +6,8 @@
 
 ## 주요 변경사항
 
-- D3D9 -> D3D11
-- D3DX -> DirectXTK
+- D3D9, D3DX -> D3D11, DirectXTK, DWrite, Direct2D
 - XInput -> GameInput
 - XAct -> XAudio2
-- 그외 그냥 하고 싶은 정도까지만 코드 선별 및 일부 변형
+- 그외 
+    - 그냥 하고 싶은 정도까지만 코드 선별 및 일부 변형
